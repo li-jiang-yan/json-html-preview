@@ -22,7 +22,7 @@ require(["vs/editor/editor.main"], async function () {
   // Create the editor with sample JSON
   const editorDiv = document.getElementById("editor");
   var editor = monaco.editor.create(editorDiv, {
-    value: await fetch('../assets/json/example.json').then(response => response.text()),
+    value: await fetch('./assets/json/example.json').then(response => response.text()),
     language: "json",
     scrollBeyondLastLine: false
   });
