@@ -19,19 +19,25 @@ window.MonacoEnvironment = {
 };
 
 require(["vs/editor/editor.main"], async function () {
-  // Create the editor with some sample JavaScript code
+  // Create the editor with sample JSON
   const editorDiv = document.getElementById("editor");
   var editor = monaco.editor.create(editorDiv, {
     value: await fetch('../assets/json/example.json').then(response => response.text()),
-    language: "json"
+    language: "json",
+    scrollBeyondLastLine: false
   });
 
-  // Resize the editor when the window size changes
+  // Fit the editor to its content, including its container's border.
   function resizeEditor() {
+    const height = editor.getContentHeight();
+    const borderHeight = editorDiv.offsetHeight - editorDiv.clientHeight;
+    editorDiv.style.height = `${height + borderHeight}px`;
     editor.layout({
-      width: editorDiv.offsetWidth,
-      height: editorDiv.offsetHeight
-    })
+      width: editorDiv.clientWidth,
+      height
+    });
   }
+  editor.onDidContentSizeChange(resizeEditor);
   window.addEventListener("resize", resizeEditor);
+  resizeEditor();
 });
