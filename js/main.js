@@ -40,17 +40,26 @@ require(["vs/editor/editor.main"], async function () {
   editor.onDidContentSizeChange(resizeEditor);
   window.addEventListener("resize", resizeEditor);
   resizeEditor();
-  previewResult();
+
+  editor.getModel().onDidChangeContent(() => previewResult(editor.getValue()));
+  previewResult(editor.getValue());
 });
 
 // Preview of JSON HTML
-function previewResult() {
-  const viewLines = Array.from(document.querySelectorAll(".view-line"));
-  const jsonString = viewLines.map(
-    viewLine => viewLine.textContent).join("").replace(/\u00A0/g, " "
-  );
-  const object = JSON.parse(jsonString);
-  document.getElementById("output").replaceChildren(render(object));
+function previewResult(jsonString) {
+  const output = document.getElementById("output");
+  try {
+    const object = JSON.parse(jsonString);
+    output.replaceChildren(render(object));
+  } catch (error) {
+    const errorDiv = document.createElement("div");
+    errorDiv.classList.add(
+      "p-3", "text-danger-emphasis", "bg-danger-subtle", "border", "border-danger-subtle",
+      "rounded-3"
+    );
+    errorDiv.replaceChildren(error)
+    output.replaceChildren(errorDiv);
+  }
 }
 
 function render(input) {
